@@ -1,9 +1,9 @@
 var base = require('./base');
 var BaseFormatter = base.BaseFormatter;
 
-var HtmlFormatter = function HtmlFormatter() {};
+var HtmlEmailFormatter = function HtmlEmailFormatter() {};
 
-HtmlFormatter.prototype = new BaseFormatter();
+HtmlEmailFormatter.prototype = new BaseFormatter();
 
 function htmlEscape(text) {
   var html = text;
@@ -20,15 +20,15 @@ function htmlEscape(text) {
   return html;
 }
 
-HtmlFormatter.prototype.typeFormattterErrorFormatter = function(context, err) {
+HtmlEmailFormatter.prototype.typeFormattterErrorFormatter = function(context, err) {
   context.out('<pre class="jsondiffpatch-error">' + err + '</pre>');
 };
 
-HtmlFormatter.prototype.formatValue = function(context, value) {
+HtmlEmailFormatter.prototype.formatValue = function(context, value) {
   context.out('<pre>' + htmlEscape(JSON.stringify(value, null, 2)) + '</pre>');
 };
 
-HtmlFormatter.prototype.formatTextDiffString = function(context, value) {
+HtmlEmailFormatter.prototype.formatTextDiffString = function(context, value) {
   var lines = this.parseTextDiff(value);
   context.out('<ul class="jsondiffpatch-textdiff" style="list-style-type: none">');
   for (var i = 0, l = lines.length; i < l; i++) {
@@ -55,7 +55,7 @@ HtmlFormatter.prototype.formatTextDiffString = function(context, value) {
   context.out('</ul>');
 };
 
-var adjustArrows = function jsondiffpatchHtmlFormatterAdjustArrows(node) {
+var adjustArrows = function jsondiffpatchHtmlEmailFormatterAdjustArrows(node) {
   node = node || document;
   var getElementText = function(el) {
     return el.textContent || el.innerText;
@@ -102,20 +102,20 @@ var adjustArrows = function jsondiffpatchHtmlFormatterAdjustArrows(node) {
   });
 };
 
-HtmlFormatter.prototype.rootBegin = function(context, type, nodeType) {
+HtmlEmailFormatter.prototype.rootBegin = function(context, type, nodeType) {
   var nodeClass = 'jsondiffpatch-' + type +
     (nodeType ? ' jsondiffpatch-child-node-type-' + nodeType : '');
   context.out('<div class="jsondiffpatch-delta ' + nodeClass + '">');
 };
 
-HtmlFormatter.prototype.rootEnd = function(context) {
+HtmlEmailFormatter.prototype.rootEnd = function(context) {
   context.out('</div>' + (context.hasArrows ?
     ('<script type="text/javascript">setTimeout(' +
       adjustArrows.toString() +
       ',10);</script>') : ''));
 };
 
-HtmlFormatter.prototype.nodeBegin = function(context, key, leftKey, type, nodeType) {
+HtmlEmailFormatter.prototype.nodeBegin = function(context, key, leftKey, type, nodeType) {
   var nodeClass = 'jsondiffpatch-' + type +
     (nodeType ? ' jsondiffpatch-child-node-type-' + nodeType : '');
   context.out('<li class="' + nodeClass + '" data-key="' + leftKey + '">' +
@@ -123,13 +123,13 @@ HtmlFormatter.prototype.nodeBegin = function(context, key, leftKey, type, nodeTy
 };
 
 
-HtmlFormatter.prototype.nodeEnd = function(context) {
+HtmlEmailFormatter.prototype.nodeEnd = function(context) {
   context.out('</li>');
 };
 
 /* jshint camelcase: false */
 
-HtmlFormatter.prototype.format_unchanged = function(context, delta, left) {
+HtmlEmailFormatter.prototype.format_unchanged = function(context, delta, left) {
   if (typeof left === 'undefined') {
     return;
   }
@@ -138,7 +138,7 @@ HtmlFormatter.prototype.format_unchanged = function(context, delta, left) {
   context.out('</div>');
 };
 
-HtmlFormatter.prototype.format_movedestination = function(context, delta, left) {
+HtmlEmailFormatter.prototype.format_movedestination = function(context, delta, left) {
   if (typeof left === 'undefined') {
     return;
   }
@@ -147,7 +147,7 @@ HtmlFormatter.prototype.format_movedestination = function(context, delta, left) 
   context.out('</div>');
 };
 
-HtmlFormatter.prototype.format_node = function(context, delta, left) {
+HtmlEmailFormatter.prototype.format_node = function(context, delta, left) {
   // recurse
   var nodeType = (delta._t === 'a') ? 'array' : 'object';
   context.out('<ul class="jsondiffpatch-node jsondiffpatch-node-type-' + nodeType + '" style="list-style-type: none">');
@@ -155,13 +155,13 @@ HtmlFormatter.prototype.format_node = function(context, delta, left) {
   context.out('</ul>');
 };
 
-HtmlFormatter.prototype.format_added = function(context, delta) {
+HtmlEmailFormatter.prototype.format_added = function(context, delta) {
   context.out('<div class="jsondiffpatch-value" style="background-color: #bbffbb;">');
   this.formatValue(context, delta[0]);
   context.out('</div>');
 };
 
-HtmlFormatter.prototype.format_modified = function(context, delta) {
+HtmlEmailFormatter.prototype.format_modified = function(context, delta) {
   context.out('<div class="jsondiffpatch-value jsondiffpatch-left-value" style="background-color: #ffbbbb;text-decoration: line-through;">');
   this.formatValue(context, delta[0]);
   context.out('</div>' +
@@ -170,13 +170,13 @@ HtmlFormatter.prototype.format_modified = function(context, delta) {
   context.out('</div>');
 };
 
-HtmlFormatter.prototype.format_deleted = function(context, delta) {
+HtmlEmailFormatter.prototype.format_deleted = function(context, delta) {
   context.out('<div class="jsondiffpatch-value" style="background-color: #ffbbbb;text-decoration: line-through;">');
   this.formatValue(context, delta[0]);
   context.out('</div>');
 };
 
-HtmlFormatter.prototype.format_moved = function(context, delta) {
+HtmlEmailFormatter.prototype.format_moved = function(context, delta) {
   context.out('<div class="jsondiffpatch-value">');
   this.formatValue(context, delta[0]);
   context.out('</div><div class="jsondiffpatch-moved-destination">' + delta[1] + '</div>');
@@ -199,7 +199,7 @@ HtmlFormatter.prototype.format_moved = function(context, delta) {
   context.hasArrows = true;
 };
 
-HtmlFormatter.prototype.format_textdiff = function(context, delta) {
+HtmlEmailFormatter.prototype.format_textdiff = function(context, delta) {
   context.out('<div class="jsondiffpatch-value">');
   this.formatTextDiffString(context, delta[0]);
   context.out('</div>');
@@ -265,7 +265,7 @@ var hideUnchanged = function(node, delay) {
   return showUnchanged(false, node, delay);
 };
 
-exports.HtmlFormatter = HtmlFormatter;
+exports.HtmlEmailFormatter = HtmlEmailFormatter;
 
 exports.showUnchanged = showUnchanged;
 
@@ -275,7 +275,7 @@ var defaultInstance;
 
 exports.format = function(delta, left) {
   if (!defaultInstance) {
-    defaultInstance = new HtmlFormatter();
+    defaultInstance = new HtmlEmailFormatter();
   }
   return defaultInstance.format(delta, left);
 };
