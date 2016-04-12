@@ -2,6 +2,7 @@ var environment = require('../environment');
 
 exports.base = require('./base');
 exports.html = require('./html');
+exports.html_email = require('./html_email');
 exports.annotated = require('./annotated');
 exports.jsonpatch = require('./jsonpatch');
 
